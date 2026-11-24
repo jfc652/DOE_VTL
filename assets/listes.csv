@@ -1,0 +1,43 @@
+liste;valeur
+version;(V1)
+version;(V2)
+version;(V3)
+version;(V4)
+version;(V5)
+ras;RAS
+ras;SO
+ras;Oui
+ras;Non
+accessType;I lock
+accessType;Porte grillagée
+accessType;Portail coulissant
+accessType;Portillon
+accessType;Porte pleine
+accessType;Local technique
+accessType;Accès libre
+keyType;SO
+keyType;Cadenas
+keyType;Deny
+keyType;Abloy
+keyType;Clé triangle
+keyType;Clé carrée
+keyType;Badge
+keyType;Digicode
+keyType;Aucune
+siteType;Pylône
+siteType;Toit-terrasse
+siteType;Château d'eau
+siteType;Mât
+siteType;Clocher
+siteType;Silo
+siteType;Cheminée
+siteType;Immeuble
+securityType;SO
+securityType;Cadenas
+securityType;Tampon verrouillé
+securityType;Fermeture par vis
+traffic;RAS
+traffic;Oui
+traffic;Non
+traffic;Alternat par feux tricolores
+traffic;Alternat manuel (K10)

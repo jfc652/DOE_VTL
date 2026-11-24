@@ -1,0 +1,268 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; font-family: Arial, Helvetica, sans-serif; color: #111; }
+
+/* ---------- Mise en page de l'application ---------- */
+.app { display: flex; height: 100vh; background: #d9dce1; }
+/* Formulaire : thème gris foncé */
+.sidebar {
+  width: 400px; max-width: 45vw; overflow-y: auto; padding: 0 0 40px;
+  background: #2b2e33; color: #e8e9eb; border-right: 1px solid #1b1d20; color-scheme: dark;
+}
+.sidebar-head { position: sticky; top: 0; background: #2b2e33; padding: 12px 14px; border-bottom: 1px solid #44484f; z-index: 5; }
+.sidebar-head h1 { margin: 0 0 8px; font-size: 18px; color: #fff; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 6px; }
+.hint { font-size: 12px; color: #9ea3ab; margin: 6px 0 0; }
+
+details { border-bottom: 1px solid #3c4047; padding: 0 14px; }
+summary { cursor: pointer; font-weight: bold; padding: 11px 0; font-size: 14px; color: #fff; }
+details[open] { padding-bottom: 12px; }
+label { display: block; font-size: 12px; color: #b9bdc4; margin: 8px 0 0; }
+label.check { display: flex; gap: 6px; align-items: center; }
+.sidebar input[type=text], .sidebar input[type=date], .sidebar textarea, .sidebar select, .sidebar input[type=file], .sidebar input[type=search] {
+  display: block; width: 100%; margin-top: 3px; padding: 6px 8px; font: inherit; font-size: 13px;
+  border: 1px solid #555a63; border-radius: 4px; background: #1f2226; color: #f1f2f3;
+}
+.sidebar [hidden] { display: none !important; }
+.zoom-bar label { color: #333; margin: 0; }
+.sidebar input::placeholder, .sidebar textarea::placeholder { color: #7d828a; }
+.sidebar input:focus, .sidebar textarea:focus, .sidebar select:focus { outline: 2px solid #4d8fe8; outline-offset: 0; border-color: #4d8fe8; }
+.row { display: flex; gap: 8px; }
+.row > label { flex: 1; min-width: 0; }
+fieldset { border: 1px solid #494d55; border-radius: 4px; margin: 10px 0 0; padding: 6px 8px 10px; }
+legend { font-size: 12px; color: #b9bdc4; padding: 0 4px; }
+
+.sidebar button { font: inherit; font-size: 13px; padding: 6px 10px; border: 1px solid #5a5f68; border-radius: 4px; background: #3a3e45; color: #f1f2f3; cursor: pointer; }
+.sidebar button:hover { background: #484d55; }
+.sidebar button:disabled { opacity: .4; cursor: default; }
+.sidebar button.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+.sidebar button.primary:hover { background: #3b87ee; }
+.sidebar button.danger { color: #ff8a8a; }
+.sidebar button.small { margin-top: 8px; font-size: 12px; padding: 4px 8px; }
+
+/* listes déroulantes + saisie libre */
+.listctl { display: flex; flex-direction: column; gap: 4px; }
+.listctl .list-other { margin-top: 0; }
+
+/* lignes mode de pose */
+.pose-item { border: 1px solid #4a4e56; border-radius: 4px; padding: 6px; margin-top: 6px; background: #343840; }
+.pose-item .row { align-items: flex-start; }
+.pose-item input[type=text] { margin-top: 0; }
+.pose-item .ml { flex: 0 0 84px; }
+.pose-item .row button.small { margin-top: 0; }
+
+/* modèles */
+.model-item { display: flex; gap: 4px; margin-top: 6px; }
+.model-item .model-apply { flex: 1; min-width: 0; text-align: left; display: flex; flex-direction: column; gap: 2px; }
+.model-item .model-apply b { font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.model-item .model-apply span { font-size: 11px; color: #a3a8b0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.model-item button.icon { flex: none; padding: 4px 9px; }
+.model-save { display: flex; gap: 6px; margin-top: 10px; align-items: flex-end; }
+.model-save label { flex: 1; margin: 0; }
+.model-save button { margin-top: 0; white-space: nowrap; }
+.btn-line { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.btn-line button.small { margin-top: 0; }
+
+/* liste des photos */
+.photo-item { display: flex; gap: 8px; border: 1px solid #4a4e56; border-radius: 6px; padding: 6px; margin-top: 8px; background: #343840; }
+.photo-item img { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; flex: none; background: #1f2226; }
+.photo-item .body { flex: 1; min-width: 0; }
+.photo-item .num { font-weight: bold; font-size: 12px; margin-bottom: 3px; color: #fff; }
+.photo-item textarea, .photo-item input[type=text] { width: 100%; font: inherit; font-size: 12px; padding: 4px 6px; margin-top: 0; margin-bottom: 4px; }
+.photo-item .actions { display: flex; gap: 4px; }
+.photo-item .actions button { padding: 2px 8px; font-size: 12px; }
+
+/* ---------- Zone d'aperçu ---------- */
+.preview-wrap { flex: 1; overflow: auto; position: relative; }
+.zoom-bar { position: sticky; top: 0; z-index: 4; display: flex; gap: 16px; align-items: center; padding: 8px 16px; background: rgba(255,255,255,.92); border-bottom: 1px solid #ccc; font-size: 13px; }
+.preview { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; zoom: .8; }
+
+/* ---------- Page A4 ---------- */
+.page {
+  width: 210mm; height: 297mm; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.3);
+  padding: 12mm 14mm 10mm; display: flex; flex-direction: column; overflow: hidden;
+  font-size: 9pt; page-break-after: always; break-after: page; position: relative;
+}
+.page:last-child { page-break-after: auto; break-after: auto; }
+
+/* En-tête : logo gauche | titre | logo droite */
+.hdr { width: 100%; border-collapse: collapse; table-layout: fixed; flex: none; }
+.hdr td { border: 1px solid #000; vertical-align: middle; padding: 2mm; }
+.hdr .logo-l { width: 24mm; text-align: center; }
+.hdr .logo-r { width: 36mm; text-align: center; }
+.hdr img { max-width: 100%; max-height: 22mm; display: block; margin: 0 auto; }
+.hdr .title { padding-left: 4mm; }
+.hdr .title .code { font-size: 20pt; font-weight: bold; text-align: center; margin-bottom: 1mm; }
+.hdr .title .l2row { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; padding-right: 4mm; }
+.hdr .title .l2, .hdr .title .l3 { font-size: 14pt; font-weight: bold; line-height: 1.15; }
+
+.body { flex: 1; min-height: 0; padding-top: 5mm; display: flex; flex-direction: column; }
+
+/* Pied de page */
+.ftr { flex: none; margin-top: 4mm; }
+.ftr table { border-collapse: collapse; width: 92%; margin: 0 auto; table-layout: fixed; }
+.ftr td { border: 1px solid #000; padding: 1.5mm 2mm; font-size: 8pt; vertical-align: top; height: 12mm; }
+.ftr .pageno { text-align: center; font-size: 9pt; margin-top: 6mm; }
+
+/* Couverture */
+.pill { background: #d9d9d9; border-radius: 3mm; text-align: center; font-weight: bold; padding: 4mm 6mm; width: 70%; margin: 8mm auto; font-size: 11pt; }
+.pill.wide { width: 85%; }
+.cover-img { border: 1.2mm solid #000; padding: 0; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #fff; margin: 0 auto; width: 96%; }
+.cover-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.cover-img .empty { color: #999; font-size: 10pt; }
+
+/* Page 2 */
+.sec-title { font-weight: bold; text-decoration: underline; font-size: 11pt; margin: 4mm 0 2mm; }
+.sec-title::before { content: "\2022"; display: inline-block; margin-right: 3mm; text-decoration: none; }
+table.info { width: 100%; border-collapse: collapse; table-layout: fixed; }
+table.info td { border: 1px solid #000; padding: 2mm 3mm; vertical-align: top; font-size: 8pt; line-height: 1.3; }
+table.info td b { font-weight: bold; }
+table.info td.center { text-align: center; vertical-align: middle; }
+table.info ul { margin: 0; padding-left: 4mm; }
+.pre { white-space: pre-line; }
+
+/* Pages image (légende / coupe) */
+.imgbox { border: 0.3mm solid #000; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.imgbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.banner { border: 0.3mm solid #000; text-align: center; font-weight: bold; font-size: 11pt; padding: 1.5mm; margin-bottom: 4mm; }
+
+/* Pages photos */
+.grid { flex: 1; min-height: 0; display: grid; gap: 4mm 4mm; }
+.cell { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.cell .frame { flex: 1; min-height: 0; border: 0.3mm solid #000; display: flex; align-items: center; justify-content: center; position: relative; background: #fff; }
+.cell .frame img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.cell .tag { position: absolute; left: 2mm; bottom: 2mm; background: #fff8a8; border: 0.3mm solid #e6d800; padding: 1mm 2mm; font-size: 7pt; font-weight: bold; text-align: center; max-width: 45%; box-shadow: 0 0 1px rgba(0,0,0,.3); }
+.cell .cap { border: 0.3mm solid #000; border-top: none; padding: 1.2mm 1.5mm; font-size: 8pt; min-height: 9mm; line-height: 1.25; white-space: pre-line; }
+.cell .cap b { font-weight: bold; }
+
+/* ---------- Impression ---------- */
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { height: auto; background: #fff; }
+  .app { display: block; height: auto; background: #fff; }
+  .sidebar, .zoom-bar { display: none !important; }
+  .preview-wrap { overflow: visible; }
+  .preview { zoom: 1 !important; padding: 0; gap: 0; display: block; }
+  .page { box-shadow: none; margin: 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+@media (max-width: 900px) {
+  .app { flex-direction: column; height: auto; }
+  .sidebar { width: 100%; max-width: none; }
+}
+
+/* ---------- Éditeur de tracés ---------- */
+.modal { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; background: rgba(15,16,18,.94); color: #eee; }
+.modal[hidden] { display: none; }
+.modal-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 14px; background: #2b2e33; border-bottom: 1px solid #44484f; font-size: 13px; }
+.modal-bar .grp { display: flex; gap: 6px; align-items: center; }
+.modal-bar .grp.right { margin-left: auto; }
+.modal-bar label { margin: 0; color: #d0d3d8; display: flex; gap: 6px; align-items: center; }
+.modal-bar button, .modal-bar select { font: inherit; font-size: 13px; padding: 6px 10px; border: 1px solid #5a5f68; border-radius: 4px; background: #3a3e45; color: #f1f2f3; cursor: pointer; }
+.modal-bar button:hover { background: #484d55; }
+.modal-bar button:disabled { opacity: .4; cursor: default; }
+.modal-bar button.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+.modal-bar button.tool.active { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+.modal-bar input[type=color] { width: 34px; height: 28px; padding: 0; border: 1px solid #5a5f68; border-radius: 4px; background: none; cursor: pointer; }
+.swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff3; cursor: pointer; padding: 0 !important; }
+.swatch.active { border-color: #fff; box-shadow: 0 0 0 2px #1a73e8; }
+.modal-hint { padding: 6px 14px; font-size: 12px; color: #aeb3ba; background: #25282c; }
+.modal-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px; }
+#drawSvg { max-width: 100%; max-height: 100%; width: 100%; height: 100%; touch-action: none; user-select: none; background: #000; }
+#drawSvg.draw { cursor: crosshair; }
+#drawSvg.edit { cursor: default; }
+.photo-item .actions .draw-btn { margin-left: auto; }
+
+/* tracés dans les pages photos */
+.cell .frame svg { width: 100%; height: 100%; display: block; }
+.photo-item .badge { display: inline-block; font-size: 11px; background: #1a73e8; color: #fff; border-radius: 9px; padding: 0 6px; margin-left: 6px; }
+
+@media print { .modal { display: none !important; } }
+
+/* ======================= DOE VTL ======================= */
+
+/* Pages couverture / vue d'ensemble / plan de masse */
+.pill.vtl { width: 54%; margin: 0 auto 13mm; padding: 3mm 4mm; font-size: 9pt; box-shadow: 0 0.6mm 1mm rgba(0,0,0,.25); }
+.pill.vtl.first { margin-top: 20mm; }
+.pill.vtl.wide { width: 62%; margin: 14mm auto 0; }
+.plan-title { text-align: center; font-weight: bold; font-size: 10pt; margin: 30mm 0 18mm; }
+.slot { width: 130mm; height: 105mm; margin: 0 auto; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex: none; }
+.slot img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.slot svg { width: 100%; height: 100%; display: block; }
+.slot .empty { color: #999; font-size: 10pt; text-align: center; padding: 4mm; }
+.slot.thick { border: 1.1mm solid #000; }
+.slot.plan { border: 0.5mm solid #1f3a6e; }
+.slot.shadow { box-shadow: 1.2mm 1.2mm 1.6mm rgba(0,0,0,.45); }
+
+/* Page caractéristiques */
+.vsec { font-weight: bold; text-decoration: underline; font-size: 8pt; margin: 5mm 0 2mm; padding-left: 8mm; }
+.vsec:first-child { margin-top: 2mm; }
+.vsec::before { content: "\2022"; display: inline-block; margin-right: 3mm; text-decoration: none; }
+.vlist { list-style: none; margin: 0; padding: 0 0 0 14mm; font-size: 6.8pt; line-height: 1.6; }
+.vlist li { position: relative; padding-left: 4mm; }
+.vlist > li::before { content: "-"; position: absolute; left: 0; }
+.vlist ul.sub { list-style: none; margin: 0; padding: 0 0 0 7mm; }
+.vlist ul.sub li::before { content: "o"; position: absolute; left: 0; font-family: "Courier New", monospace; }
+table.vinfo { width: 100%; border-collapse: collapse; table-layout: fixed; }
+table.vinfo td { border: 0.3mm solid #000; padding: 1.2mm 1.6mm; vertical-align: top; font-size: 6.8pt; line-height: 1.4; }
+
+/* Légendes des photos */
+.cell .cap.bold { font-weight: bold; }
+
+/* Formulaire : images d'emplacement, import, classement */
+.slot-ctl { margin-top: 6px; }
+.slot-ctl .hint { margin: 4px 0 0; }
+.photo-item .num { display: flex; align-items: center; gap: 6px; }
+.photo-item .num input.pos { width: 54px; margin: 0; padding: 2px 4px; }
+.photo-item .handle { cursor: grab; font-size: 18px; line-height: 1; color: #9ea3ab; user-select: none; padding: 0 2px; }
+.photo-item .handle:active { cursor: grabbing; }
+.photo-item .fname { font-size: 11px; color: #9ea3ab; margin: -1px 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.photo-item.dragging { opacity: .45; }
+.photo-item.over { outline: 2px dashed #4d8fe8; outline-offset: 1px; }
+
+/* ---- Ajustements mesurés sur le modèle DOE_VTL (A4) ---- */
+.page { padding: 12.5mm 15.5mm 14mm 20.5mm; }
+table.hdr { height: 27.5mm; }
+.hdr td { padding: 1.5mm 2mm; }
+.hdr .logo-l { width: 32mm; }
+.hdr .logo-r { width: 29mm; }
+.hdr img { max-height: 24mm; }
+.ftr table { width: 100%; }
+.ftr td { height: 13mm; }
+.ftr .pageno { margin-top: 5mm; }
+
+/* couverture / vue d'ensemble / plan */
+.pill.vtl { width: 63%; padding: 3.4mm 4mm; }
+.pill.vtl.first { margin-top: 18mm; }
+.pill.vtl.wide { width: 73.5%; margin: 15.5mm auto 0; }
+.plan-title { margin: 25mm 0 18mm; }
+.slot { width: 130mm; }
+.slot[data-kind=cover], .slot.cover { width: 126mm; }
+
+/* page caractéristiques : espacement du modèle */
+.vsec { margin: 8mm 0 6mm; }
+.vsec:first-child { margin-top: 3mm; }
+.vlist { line-height: 1.95; }
+
+/* pages photos : cadres + légende détachée */
+.grid { gap: 4mm 9.8mm; padding: 0 4.5mm; }
+.cell .cap { margin-top: 3.6mm; border-top: 0.3mm solid #000; min-height: 7.6mm; padding: 1mm 1.5mm; }
+
+/* ---- Typographie mesurée sur le modèle ---- */
+.hdr .title { vertical-align: top; padding: 3mm 2mm 1mm 1.8mm; }
+.hdr .title .code { font-size: 21pt; line-height: 1.1; margin-bottom: 2.5mm; }
+.hdr .title .l2, .hdr .title .l3 { font-size: 16pt; }
+
+.pill.vtl { font-size: 10.5pt; }
+.pill.vtl.wide { margin-top: 18mm; }
+.plan-title { font-size: 11pt; }
+
+.vsec { font-size: 10pt; margin: 6mm 0 5mm; }
+.vsec:first-child { margin: 0 0 5mm; }
+.vlist { font-size: 8pt; line-height: 1.65; padding-left: 11mm; }
+.vlist li { padding-left: 6.4mm; }
+.vlist ul.sub { padding-left: 6.6mm; }
+.vlist ul.sub li { padding-left: 4.3mm; }
+table.vinfo td { font-size: 7.8pt; line-height: 1.35; }
+
+.cell .cap { font-size: 7pt; line-height: 1.25; }

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Générateur de DOE VTL</title>
+  <link rel="icon" href="assets/logo-free.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== FORMULAIRE ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h1>DOE VTL</h1>
+      <div class="toolbar">
+        <button type="button" id="btnPrint" class="primary">Imprimer / PDF</button>
+        <button type="button" id="btnExport">Exporter (.json)</button>
+        <button type="button" id="btnImport">Importer</button>
+        <button type="button" id="btnNew" class="danger">Nouveau</button>
+        <input type="file" id="fileImport" accept=".json,application/json" hidden>
+      </div>
+      <p class="hint" id="saveStatus">Sauvegarde automatique dans ce navigateur.</p>
+    </div>
+
+    <details>
+      <summary>Modèles en mémoire (<span id="modelCount"></span>)</summary>
+      <label>Rechercher un modèle
+        <input type="search" id="modelSearch" placeholder="Nom, type de site, accès…">
+      </label>
+      <div id="modelList"></div>
+      <div class="model-save">
+        <label>Enregistrer le formulaire comme modèle
+          <input type="text" id="modelName" placeholder="Nom du nouveau modèle">
+        </label>
+        <button type="button" id="btnSaveModel" class="primary">Enregistrer</button>
+      </div>
+      <p class="hint">Un modèle garde tout sauf le code projet, l'adresse, la date, le nom du câble et les images/photos.</p>
+      <div class="btn-line">
+        <button type="button" id="btnExportModels" class="small">Exporter les modèles</button>
+        <button type="button" id="btnImportModels" class="small">Importer des modèles</button>
+        <input type="file" id="fileModels" accept=".json,application/json" hidden>
+      </div>
+    </details>
+
+    <details>
+      <summary>En-tête (logos et titre)</summary>
+      <label>Code affiché dans l'en-tête<input data-key="headerCode" type="text"></label>
+      <div class="row">
+        <label>Ligne 2 (gauche)<input data-key="headerLine2" type="text"></label>
+        <label>Ligne 2 (droite)<input data-key="headerLine3" type="text"></label>
+      </div>
+      <div class="row">
+        <label>Logo gauche<input type="file" id="logoLeftFile" accept="image/*"></label>
+        <label>Logo droite<input type="file" id="logoRightFile" accept="image/*"></label>
+      </div>
+      <button type="button" id="btnResetLogos" class="small">Rétablir les logos d'origine</button>
+    </details>
+
+    <details>
+      <summary>Pied de page</summary>
+      <div class="row">
+        <label>Version du document<input data-key="version" data-list="version" type="text"></label>
+        <label>Code projet du site<input data-key="projectCode" type="text"></label>
+      </div>
+      <div class="row">
+        <label>Fait par<input data-key="author" type="text"></label>
+        <label>Date de réalisation<input data-key="date" type="date"></label>
+      </div>
+    </details>
+
+    <details>
+      <summary>Page 1 : Couverture</summary>
+      <label>Titre de l'encart<input data-key="coverTitle" type="text"></label>
+      <div class="slot-ctl" data-slot="coverImg" data-label="photo de situation">
+        <label>Photo centrée de situation du projet<input type="file" class="slot-file" accept="image/*"></label>
+        <p class="hint slot-info"></p>
+        <div class="btn-line">
+          <button type="button" class="small slot-draw">✎ Tracer</button>
+          <button type="button" class="small slot-clear">Retirer l'image</button>
+        </div>
+      </div>
+      <label>Adresse du site<input data-key="address" type="text"></label>
+    </details>
+
+    <details>
+      <summary>Page 2 : Vue d'ensemble du site</summary>
+      <label class="check"><input type="checkbox" data-key="showOverview" data-bool> Afficher cette page</label>
+      <label>Titre de l'encart<input data-key="overviewTitle" type="text"></label>
+      <div class="slot-ctl" data-slot="overviewImg" data-label="vue d'ensemble">
+        <label>Image de la vue d'ensemble<input type="file" class="slot-file" accept="image/*"></label>
+        <p class="hint slot-info"></p>
+        <div class="btn-line">
+          <button type="button" class="small slot-draw">✎ Tracer</button>
+          <button type="button" class="small slot-clear">Retirer l'image</button>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Page 3 : Caractéristiques de la liaison</summary>
+      <label>Linéaire de câbles<input data-key="cableLength" type="text" placeholder="Ex. 20 ML"></label>
+      <fieldset>
+        <legend>Linéaire par mode de pose et type / nb de fourreaux</legend>
+        <label>Souterrain<input data-key="laidUnderground" data-suggest="ras" type="text" placeholder="Ex. 10 ml"></label>
+        <label>Immeuble / CDC<input data-key="laidBuilding" data-suggest="ras" type="text"></label>
+        <label>Autre<input data-key="laidOther" data-suggest="ras" type="text"></label>
+      </fieldset>
+      <label>Types et nombres de chambres<input data-key="chambers" data-suggest="ras" type="text"></label>
+      <label>Tube iro ou équivalent fixé (ml)<input data-key="tubeIro" data-suggest="ras" type="text"></label>
+      <label>Faux-plancher / faux-plafond (m²)<input data-key="falseFloor" data-suggest="ras" type="text"></label>
+      <label>Percement cloison, gaine, plâtre inter palier (u)<input data-key="partition" data-suggest="ras" type="text"></label>
+      <label>Percement mur plein, tubage anti feu (u)<input data-key="wall" data-suggest="ras" type="text"></label>
+      <fieldset>
+        <legend>Linéaire de pose de gaine</legend>
+        <label>Anti UV non fendue<input data-key="sheathUV" data-suggest="ras" type="text" placeholder="Ex. 3ml"></label>
+        <label>Fendue LSOH<input data-key="sheathLSOH" data-suggest="ras" type="text"></label>
+        <label>Anti rongeur (type capri…)<input data-key="sheathRodent" data-suggest="ras" type="text"></label>
+      </fieldset>
+    </details>
+
+    <details>
+      <summary>Modalités d'accès</summary>
+      <label>Nom et information de contact<textarea data-key="accessContact" rows="2"></textarea></label>
+      <div class="row">
+        <label>Type d'accès<input data-key="accessType" data-list="accessType" type="text"></label>
+        <label>Type de clés<input data-key="keyType" data-list="keyType" type="text"></label>
+      </div>
+      <label>Code, Badgeuse<input data-key="accessCode" data-suggest="ras" type="text"></label>
+      <div class="row">
+        <label>Sécurisation de chambre<input data-key="chamberSecurity" data-suggest="ras" type="text"></label>
+        <label>Nom de la chambre<input data-key="chamberName" data-suggest="ras" type="text"></label>
+      </div>
+      <label>Type de sécurisation<input data-key="securityType" data-list="securityType" type="text"></label>
+    </details>
+
+    <details>
+      <summary>Informations remarquables</summary>
+      <label>Coord. technicien qui a fait la VT et/ou VIC<textarea data-key="technician" rows="3"></textarea></label>
+      <label>Typologie du site<input data-key="siteType" data-list="siteType" type="text"></label>
+      <label>Monument historique, ONF, VNF<input data-key="heritage" data-suggest="ras" type="text"></label>
+      <label>Nom du câble CDD ou CAD<input data-key="cableName" type="text"></label>
+    </details>
+
+    <details>
+      <summary>Impact GC</summary>
+      <label>Domaine public<input data-key="publicDomain" data-suggest="ras" type="text"></label>
+      <label>Impact gestionnaire (villes concernées, département…)<input data-key="manager" type="text"></label>
+      <label>Domaine privé<input data-key="privateDomain" data-suggest="ras" type="text"></label>
+      <label>Numéro(s) de parcelle(s) + propriétaires + coordonnées<input data-key="parcels" type="text"></label>
+    </details>
+
+    <details>
+      <summary>Modalités de mise en œuvre / sécurité</summary>
+      <label>Signalisation routière<input data-key="signage" data-suggest="ras" type="text"></label>
+      <label>Intervention DRIRE<input data-key="drire" data-suggest="ras" type="text"></label>
+      <label>Circulation alternée<input data-key="traffic" data-list="traffic" type="text"></label>
+    </details>
+
+    <details>
+      <summary>Page 4 : Plan de masse</summary>
+      <label class="check"><input type="checkbox" data-key="showPlan" data-bool> Afficher cette page</label>
+      <label>Titre de la page<input data-key="planTitle" type="text"></label>
+      <div class="slot-ctl" data-slot="planImg" data-label="plan de masse">
+        <label>Image du plan de masse<input type="file" class="slot-file" accept="image/*"></label>
+        <p class="hint slot-info"></p>
+        <div class="btn-line">
+          <button type="button" class="small slot-draw">✎ Tracer</button>
+          <button type="button" class="small slot-clear">Retirer l'image</button>
+        </div>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Photos (<span id="photoCount">0</span>)</summary>
+      <label>Photos par page
+        <select data-key="photosPerPage" data-number>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="4">4</option>
+          <option value="6">6</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" data-key="capBold" data-bool> Légendes entièrement en gras (comme le modèle)</label>
+
+      <fieldset>
+        <legend>Importer et classer les photos</legend>
+        <p class="hint">Choisissez un dossier de photos nommées « Photo 1 », « Photo 2 »… (ou rangées dans des sous-dossiers « Photo 1 », « Photo 2 »…) : elles sont classées automatiquement par numéro avant le montage. Ce qui suit le numéro dans le nom devient la légende : « Photo 3 - Vue de la chambre.jpg ».</p>
+        <label>Si des photos sont déjà chargées
+          <select id="importMode">
+            <option value="append">Ajouter à la suite</option>
+            <option value="replace">Remplacer les photos existantes</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="importCaption" checked> Utiliser le nom du fichier comme légende</label>
+        <div class="btn-line">
+          <button type="button" id="btnImportFolder" class="small primary">Importer un dossier…</button>
+          <button type="button" id="btnImportFiles" class="small">Importer des fichiers…</button>
+        </div>
+        <div class="btn-line">
+          <button type="button" id="btnSortNames" class="small">Trier par n° / nom de fichier</button>
+          <button type="button" id="btnClearPhotos" class="small danger">Tout supprimer</button>
+        </div>
+        <input type="file" id="folderInput" webkitdirectory multiple hidden>
+        <input type="file" id="photoFiles" accept="image/*" multiple hidden>
+      </fieldset>
+
+      <p class="hint">Classement : glissez la poignée ⠿, utilisez ↑ ↓ ou saisissez la position. La numérotation « Photo N : » suit l'ordre de la liste.</p>
+      <div id="photoList"></div>
+    </details>
+
+    <details>
+      <summary>Listes de choix (fichier CSV)</summary>
+      <p class="hint">Les menus déroulants et les propositions de saisie (RAS, SO…) lisent <code>assets/listes.csv</code> (colonnes <code>liste;valeur</code>). Importez votre propre CSV pour les remplacer ; il reste en mémoire dans ce navigateur.</p>
+      <div class="btn-line">
+        <button type="button" id="btnExportCsv" class="small">Télécharger le CSV actuel</button>
+        <button type="button" id="btnImportCsv" class="small">Importer un CSV</button>
+        <button type="button" id="btnResetCsv" class="small">Listes d'origine</button>
+        <input type="file" id="fileCsv" accept=".csv,text/csv,text/plain" hidden>
+      </div>
+    </details>
+  </aside>
+
+  <!-- ===================== APERÇU ===================== -->
+  <main class="preview-wrap">
+    <div class="zoom-bar">
+      <label>Zoom <input type="range" id="zoom" min="40" max="130" value="80"></label>
+      <span id="pageInfo"></span>
+    </div>
+    <div id="preview" class="preview"></div>
+  </main>
+</div>
+
+<!-- ===================== ÉDITEUR DE TRACÉS ===================== -->
+<div id="drawModal" class="modal" hidden>
+  <div class="modal-bar">
+    <strong id="drawTitle">Tracés sur la photo</strong>
+    <div class="grp">
+      <button type="button" id="dMdDraw" class="tool active">✎ Tracer</button>
+      <button type="button" id="dMdEdit" class="tool">✥ Modifier</button>
+    </div>
+    <div class="grp" id="dSwatches" title="Couleur"></div>
+    <label class="grp">Perso <input type="color" id="dColor" value="#e53935"></label>
+    <label class="grp">Épaisseur
+      <select id="dWidth">
+        <option value="0.005">Fine</option>
+        <option value="0.009">Moyenne</option>
+        <option value="0.014" selected>Épaisse</option>
+        <option value="0.02">Très épaisse</option>
+      </select>
+    </label>
+    <label class="grp"><input type="checkbox" id="dDash"> Pointillés</label>
+    <label class="grp"><input type="checkbox" id="dHalo" checked> Contour blanc</label>
+    <div class="grp">
+      <button type="button" id="dFinish">Terminer le tracé</button>
+      <button type="button" id="dUndo">↶ Annuler</button>
+      <button type="button" id="dDelete">Supprimer le tracé</button>
+      <button type="button" id="dClear">Tout effacer</button>
+    </div>
+    <div class="grp right">
+      <button type="button" id="dCancel">Fermer sans enregistrer</button>
+      <button type="button" id="dSave" class="primary">Valider</button>
+    </div>
+  </div>
+  <div class="modal-hint" id="dHint"></div>
+  <div class="modal-stage"><svg id="drawSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
